@@ -81,10 +81,6 @@ class 栻盘():
         self.__四课 = 四课(t, r)
         self.__三传 = 三传(self.__天盘, self.__四课)
         self.__天将 = None
-        self.__获取三传()
-
-    def __获取三传(self):
-        pass
 
     def __str__(self):
         shipanPrint = [str(self.__天盘), str(self.__四课), str(self.__三传)]
@@ -99,6 +95,18 @@ class 栻盘():
             return self.__四课
         else:
             return self.__三传
+
+    @property
+    def 天盘(self):
+        return self.__天盘
+
+    @property
+    def 四课(self):
+        return self.__四课
+
+    @property
+    def 三传(self):
+        return self.__三传
 
 
 class 四课():
@@ -503,3 +511,27 @@ class 三传():
         x.add_row(['', '', self.__末, ''])
 
         return x.get_string()
+
+    @property
+    def 初(self):
+        return self.__初
+
+    @property
+    def 中(self):
+        return self.__中
+
+    @property
+    def 末(self):
+        return self.__末
+
+    def __eq__(self, other):
+        if not isinstance(other, 三传):
+            raise ValueError('{0}不是三传'.format(other))
+        return self.__初 == other.初 \
+            and self.__中 == other.中 \
+            and self.__末 == other.末
+
+    def __nq__(self, other):
+        if not isinstance(other, 三传):
+            raise ValueError('{0}不是三传'.format(other))
+        return not self.__eq__(other)

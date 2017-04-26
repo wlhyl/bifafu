@@ -84,6 +84,10 @@ class 干(Base):
         return 五行((self.num + 1)//2)
 
     @property
+    def wuxing(self):
+        return 五行((self.num + 1)//2)
+
+    @property
     def 属阳(self):
         return self.num % 2 != 0
 
@@ -126,6 +130,10 @@ class 支(Base):
             raise ValueError('{0} 不是“五行”'.format(key))
         if self.num % 3 == 0:
             return 五行(3)
+        return 五行(self.num//3 + self.num//7 + 1)
+
+    @property
+    def wuxing(self):
         return 五行(self.num//3 + self.num//7 + 1)
 
     @property
