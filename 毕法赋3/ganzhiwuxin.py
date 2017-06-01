@@ -134,6 +134,8 @@ class 支(Base):
 
     @property
     def wuxing(self):
+        if self.num % 3 == 0:
+            return 五行(3)
         return 五行(self.num//3 + self.num//7 + 1)
 
     @property
