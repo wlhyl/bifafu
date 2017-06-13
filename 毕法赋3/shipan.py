@@ -42,23 +42,31 @@ a[支(4)] 获取巳上神
         x.padding_width = 0
         x.border = 0
 
+        for i in self.table:
+            x.add_row(i)
+        return x.get_string()
+
+    @property
+    def table(self):
+        x = []
+
         line = []
         for i in range(3, 7):
             line.append(self.__天盘 + i)
-        x.add_row(line)
+        x.append(line)
 
         line = [self.__天盘 + 2, '', '', self.__天盘 + 7]
-        x.add_row(line)
+        x.append(line)
 
         line = [self.__天盘 + 1, '', '', self.__天盘 + 8]
-        x.add_row(line)
+        x.append(line)
 
         line = []
         for i in range(9, 13):
             line.append(self.__天盘 + i)
         line.reverse()
-        x.add_row(line)
-        return x.get_string()
+        x.append(line)
+        return x
 
     def __getitem__(self, key):
         '''
@@ -71,7 +79,7 @@ a[支(4)] 获取巳上神
 
 
 class 栻盘():
-    def __init__(self, t, r):
+    def __init__(self, t, r, ye=False):
         if not isinstance(t, 天盘):
             raise ValueError("{0} 不是天盘".format(t))
         if not isinstance(r, 干支):
@@ -80,11 +88,80 @@ class 栻盘():
         self.__天盘 = t
         self.__四课 = 四课(t, r)
         self.__三传 = 三传(self.__天盘, self.__四课)
-        self.__天将 = None
+        self.__天将盘 = 天将盘(self.__天盘, self.__四课, ye)
 
     def __str__(self):
-        shipanPrint = [str(self.__天盘), str(self.__四课), str(self.__三传)]
-        return "{0[0]}\n\n{0[1]}\n\n{0[2]}".format(shipanPrint)
+        __初传天将 = self.__天将盘[self.__三传.初]
+        __中传天将 = self.__天将盘[self.__三传.中]
+        __末传天将 = self.__天将盘[self.__三传.末]
+
+        sanchuanTable = self.__三传.table
+        sanchuanTable[0][3] = __初传天将
+        sanchuanTable[1][3] = __中传天将
+        sanchuanTable[2][3] = __末传天将
+
+        xSanchuan = PrettyTable()
+
+        xSanchuan.header = False
+        xSanchuan.padding_width = 0
+        xSanchuan.border = 0
+
+        for i in sanchuanTable:
+            xSanchuan.add_row(i)
+
+        siKeTianJiang = []
+        siKeTianJiang.append(self.__天将盘[self.__四课['支阴神']])
+        siKeTianJiang.append(self.__天将盘[self.__四课['支阳神']])
+        siKeTianJiang.append(self.__天将盘[self.__四课['干阴神']])
+        siKeTianJiang.append(self.__天将盘[self.__四课['干阳神']])
+
+        xsiKeTianJiang = PrettyTable()
+
+        xsiKeTianJiang.header = False
+        xsiKeTianJiang.padding_width = 0
+        xsiKeTianJiang.border = 0
+
+        xsiKeTianJiang.add_row(siKeTianJiang)
+
+        tianPanTable = self.__天盘.table
+
+        tianPanTable[1].insert(0, self.__天将盘[tianPanTable[1][0]])
+        tianPanTable[1].append(self.__天将盘[tianPanTable[1][-1]])
+
+        tianPanTable[2].insert(0, self.__天将盘[tianPanTable[2][0]])
+        tianPanTable[2].append(self.__天将盘[tianPanTable[2][-1]])
+
+        __tmp = []
+        for i in tianPanTable[0]:
+            __tmp.append(self.__天将盘[i])
+        __tmp.insert(0, '')
+        __tmp.append('')
+        tianPanTable[0].insert(0, '')
+        tianPanTable[0].append('')
+        tianPanTable.insert(0, __tmp)
+
+        __tmp = []
+        for i in tianPanTable[-1]:
+            __tmp.append(self.__天将盘[i])
+        __tmp.insert(0, '')
+        __tmp.append('')
+        tianPanTable[-1].insert(0, '')
+        tianPanTable[-1].append('')
+        tianPanTable.append(__tmp)
+
+        xtianPan = PrettyTable()
+
+        xtianPan.header = False
+        xtianPan.padding_width = 0
+        xtianPan.border = 0
+
+        for i in tianPanTable:
+            xtianPan.add_row(i)
+
+        shipanPrint = [xSanchuan.get_string(), xsiKeTianJiang.get_string(), str(self.__四课), xtianPan.get_string()]
+
+        # shipanPrint = [str(self.__天盘), str(self.__四课), str(self.__三传)]
+        return "{0[0]}\n\n{0[1]}\n{0[2]}\n\n{0[3]}".format(shipanPrint)
 
     def __getitem__(self, key):
         if key not in ['天盘', '四课', '三传']:
@@ -175,10 +252,16 @@ class 四课():
         x.padding_width = 0
         x.border = 0
 
-        x.add_row([self.__支阴神, self.__支阳神, self.__干阴神, self.__干阳神])
-        x.add_row([self.__支阳神, self.__支, self.__干阳神, self.__干])
-
+        for i in self.table:
+            x.add_row(i)
         return x.get_string()
+
+    @property
+    def table(self):
+        x = []
+        x.append([self.__支阴神, self.__支阳神, self.__干阴神, self.__干阳神])
+        x.append([self.__支阳神, self.__支, self.__干阳神, self.__干])
+        return x
 
 
 class 三传():
@@ -500,17 +583,27 @@ class 三传():
             return (chu, zhong, mo)
 
     def __str__(self):
+
         x = PrettyTable()
 
         x.header = False
         x.padding_width = 0
         x.border = 0
 
-        x.add_row(['', '', self.__初, ''])
-        x.add_row(['', '', self.__中, ''])
-        x.add_row(['', '', self.__末, ''])
-
+        for i in self.table:
+            x.add_row(i)
         return x.get_string()
+
+    @property
+    def table(self):
+        d = self.遁干
+        x = []
+
+        x.append(['', d[0], self.__初, ''])
+        x.append(['', d[1], self.__中, ''])
+        x.append(['', d[2], self.__末, ''])
+
+        return x
 
     @property
     def 初(self):
@@ -524,6 +617,25 @@ class 三传():
     def 末(self):
         return self.__末
 
+    @property
+    def 遁干(self):
+        d = []
+        gan = self.__四课['干']
+        zhi = self.__四课['支']
+        jia = 干(1)
+
+        delta = gan - jia
+
+        xunShou = zhi + (-1 * delta)
+
+        for i in (self.初, self.中, self.末):
+            zhiDelta = (i - xunShou + 12) % 12
+            if zhiDelta == 10 or zhiDelta == 11:
+                d.append('')
+            else:
+                d.append(jia + zhiDelta)
+        return d
+
     def __eq__(self, other):
         if not isinstance(other, 三传):
             raise ValueError('{0}不是三传'.format(other))
@@ -535,3 +647,63 @@ class 三传():
         if not isinstance(other, 三传):
             raise ValueError('{0}不是三传'.format(other))
         return not self.__eq__(other)
+
+
+class 天将(Base):
+    数字映射名字 = [0, '贵', '蛇', '雀', '合', '勾', '龙', '空', '虎', '常', '玄', '阴', '后']
+
+    def __init__(self, num):
+        if not isinstance(num, int):
+            raise ValueError('输入的值为%s，输入值必是大于等于1小于等于12间的整数' % num)
+        if num <= 0 or num >= 13:
+            raise ValueError('输入的值为%s，输入值必是大于等于1小于等于12间的整数' % num)
+        super().__init__(num)
+
+    def __add__(self, other):
+        if not isinstance(other, int):
+            raise ValueError('%s 必须是整数' % other)
+        tmp = (self.num + other + 12) % 12
+        tmp = 12 if tmp == 0 else tmp
+        return 天将(tmp)
+
+
+class 天将盘():
+    zhougui = (0, 6, 7, 8, 10, 12, 11, 12, 1, 2, 4)  # 地支数，取寅为1
+    yegui = (0, 12, 11, 10, 8, 6, 7, 6, 5, 4, 2)
+
+    def __init__(self, t, s, ye=False):
+        if not isinstance(t, 天盘):
+            raise ValueError("{0} 不是天盘".format(t))
+        if not isinstance(s, 四课):
+            raise ValueError("{0} 不是四课".format(s))
+        self.__天盘 = t
+        self.__四课 = s
+        self.__gan = self.__四课['干']
+        self.__guiren = None  # 贵人所乘地支
+        self.__mi = False  # 天将逆布
+
+        if ye:
+            self.__guiren = 支(self.yegui[self.__gan.num])
+        else:
+            self.__guiren = 支(self.zhougui[self.__gan.num])
+        guiRenDiPan = 支(1) + (self.__guiren - self.__天盘[支(1)])  # 贵人地盘之支
+
+        si = 支(4)
+        xu = 支(9)
+        if guiRenDiPan - si >= 0 and xu - guiRenDiPan >= 0:
+            self.__mi = True
+
+    @property
+    def mi(self):
+        return self.__mi
+
+    def __getitem__(self, key):
+        '''
+        获取某地支的天将
+        '''
+        if not isinstance(key, 支):
+            raise ValueError('只有支才有天将')
+        if self.mi:
+            return 天将(1) + (self.__guiren - key)
+        else:
+            return 天将(1) + (key - self.__guiren)

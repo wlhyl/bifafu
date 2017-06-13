@@ -50,9 +50,9 @@ class 干(Base):
     数字映射名字 = [0, '甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
 
     def __init__(self, num):
-        if num <= 0 or num >= 11:
-            raise ValueError('输入的值为%s，输入值必是大于等于1小于等于11间的整数' % num)
         if not isinstance(num, int):
+            raise ValueError('输入的值为%s，输入值必是大于等于1小于等于11间的整数' % num)
+        if num <= 0 or num >= 11:
             raise ValueError('输入的值为%s，输入值必是大于等于1小于等于11间的整数' % num)
         super().__init__(num)
 
@@ -97,9 +97,9 @@ class 支(Base):
     数字映射名字 = [0, '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑']
 
     def __init__(self, num):
-        if num <= 0 or num >= 13:
-            raise ValueError('输入的值为%s，输入值必是大于等于1小于等于12间的整数' % num)
         if not isinstance(num, int):
+            raise ValueError('输入的值为%s，输入值必是大于等于1小于等于12间的整数' % num)
+        if num <= 0 or num >= 13:
             raise ValueError('输入的值为%s，输入值必是大于等于1小于等于12间的整数' % num)
         super().__init__(num)
 

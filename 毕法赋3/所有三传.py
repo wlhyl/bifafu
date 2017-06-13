@@ -14,17 +14,22 @@ for i in range(1, 11):
         if 阴阳相同(干(i), 支(j)):
             所有甲子.append(干支(干(i), 支(j)))
 
-所有栻盘 = []
-for i in 所有天盘:
-    for j in 所有甲子:
-        所有栻盘.append(栻盘(i, j))
+# 所有栻盘 = []
+# for i in 所有天盘:
+#     for j in 所有甲子:
+#         所有栻盘.append(栻盘(i, j))
 
-result = []
-for i in 所有栻盘:
-    if i.三传 not in result:
-        result.append(i.三传)
+# result = []
+# for i in 所有栻盘:
+#     if i.三传 not in result:
+#         result.append(i.三传)
 
-print(len(result))
-for i in result:
-    print(i)
-    print()
+# print(len(result))
+# for i in result:
+#     print(i)
+#     print()
+
+a = 天盘(支(3), 支(1))
+b = 干支(干(2), 支(4))
+s = 栻盘(a, b, True)
+print(s)
